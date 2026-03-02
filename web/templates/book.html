@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Book Flight {{ flight.flight_number }} — CRS{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <!-- Flight info -->
+  <div class="col-md-4">
+    <div class="card shadow-sm p-4">
+      <h5 class="text-primary mb-3">Flight Details</h5>
+      <dl class="mb-0">
+        <dt>Flight</dt><dd>{{ flight.flight_number }}</dd>
+        <dt>From</dt><dd>{{ flight.departure_city }}</dd>
+        <dt>To</dt><dd>{{ flight.destination_city }}</dd>
+        <dt>Departure</dt><dd>{{ flight.departure_time.strftime("%d %b %Y %H:%M") }}</dd>
+        <dt>Arrival</dt><dd>{{ flight.arrival_time.strftime("%d %b %Y %H:%M") }}</dd>
+        <dt>Price</dt><dd class="fw-bold text-success">${{ "%.2f"|format(flight.price) }}</dd>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Seat map + passenger form -->
+  <div class="col-md-8">
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/book/{{ flight.flight_number }}">
+      <!-- Seat grid: 2 columns × 6 rows = 12 seats -->
+      <div class="card shadow-sm p-4 mb-4">
+        <h5 class="mb-3">Select a Seat</h5>
+        <div class="seat-grid">
+          {% for row in range(1, 7) %}
+            {% for col in ["A", "B"] %}
+              {% set seat = row ~ col %}
+              {% if seat in taken_seats %}
+                <div class="seat taken" title="Seat {{ seat }} — Taken">{{ seat }}</div>
+              {% else %}
+                <label class="seat available" title="Seat {{ seat }}">
+                  <input type="radio" name="seat_number" value="{{ seat }}" required hidden />
+                  {{ seat }}
+                </label>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </div>
+        <small class="text-muted mt-2 d-block">
+          <span class="seat-legend available-legend">Available</span>
+          &nbsp;
+          <span class="seat-legend taken-legend">Taken</span>
+        </small>
+      </div>
+
+      <!-- Passenger info -->
+      <div class="card shadow-sm p-4">
+        <h5 class="mb-3">Passenger Information</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">First Name</label>
+            <input type="text" name="passenger_first_name" class="form-control" required maxlength="50" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Last Name</label>
+            <input type="text" name="passenger_last_name" class="form-control" required maxlength="50" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Address</label>
+            <input type="text" name="address" class="form-control" required maxlength="150" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Passport Number</label>
+            <input type="text" name="passport_number" class="form-control" required maxlength="50" />
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary">Confirm Booking</button>
+          <a href="/flights" class="btn btn-outline-secondary">Back to Flights</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Highlight selected seat visually
+document.querySelectorAll('.seat.available').forEach(label => {
+  label.addEventListener('click', () => {
+    document.querySelectorAll('.seat.available').forEach(l => l.classList.remove('selected'));
+    label.classList.add('selected');
+  });
+});
+</script>
+{% endblock %}

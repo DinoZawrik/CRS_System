@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Home — CRS{% endblock %}
+
+{% block content %}
+<div class="hero text-center py-5">
+  <h1 class="display-4 fw-bold text-primary">Central Reservation System</h1>
+  <p class="lead text-muted">Book flights quickly, safely, and conveniently.</p>
+  <div class="mt-4">
+    {% if request.session.get("user") %}
+      <a href="/flights" class="btn btn-primary btn-lg me-2">Browse Flights</a>
+      <a href="/bookings" class="btn btn-outline-primary btn-lg">My Bookings</a>
+    {% else %}
+      <a href="/register" class="btn btn-primary btn-lg me-2">Get Started</a>
+      <a href="/login" class="btn btn-outline-primary btn-lg">Sign In</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-4 mt-2">
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm text-center p-4">
+      <div class="feature-icon mb-3">🔍</div>
+      <h5 class="card-title">Search Flights</h5>
+      <p class="card-text text-muted">Filter available flights by departure or destination city in real time.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm text-center p-4">
+      <div class="feature-icon mb-3">💺</div>
+      <h5 class="card-title">Choose Your Seat</h5>
+      <p class="card-text text-muted">Interactive seat map shows available and occupied seats at a glance.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm text-center p-4">
+      <div class="feature-icon mb-3">📋</div>
+      <h5 class="card-title">Manage Bookings</h5>
+      <p class="card-text text-muted">View all your reservations and cancel them with a single click.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
